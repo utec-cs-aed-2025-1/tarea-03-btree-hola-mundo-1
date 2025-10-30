@@ -85,7 +85,21 @@ class BTree {
 
   void insert(TK key);//inserta un elemento
   void remove(TK key);//elimina un elemento
-  int height();//altura del arbol. Considerar altura 0 para arbol vacio
+
+  int height(){ //altura del arbol. Considerar altura 0 para arbol vacio
+    if(root == nullptr)
+      return 0;
+
+    int height = 0;
+    Node<TK>* temp = root;
+
+    while(!temp->leaf){
+      temp = temp->children[0];
+      height += 1;
+    }
+
+    return height;
+  };
   
   // recorrido inorder
   string toString(const string& sep){
@@ -96,19 +110,78 @@ class BTree {
     return range_search(root, begin, end);
   };
 
-  TK minKey();  // minimo valor de la llave en el arbol
-  TK maxKey();  // maximo valor de la llave en el arbol
-  void clear(); // eliminar todos lo elementos del arbol
-  int size(); // retorna el total de elementos insertados  
+  TK minKey(){ // minimo valor de la llave en el arbol
+    if (root == nullptr) {
+      throw "error, arbol nulo";
+    }
+    Node<TK>* temp = root;
+    while(temp->leaf == false){
+        temp = temp->children[0]
+      }
+      return temp->keys[0];
+    };
+     
+  TK maxKey(){ // maximo valor de la llave en el arbol
+    if (root == nullptr) {
+      throw "error, arbol nulo";
+    }
+    Node<TK>* temp = root;
+    while(temp->leaf == false){
+      temp = temp->children[temp->count];
+    }
+    return temp->keys[temp->count-1];
+  };
+
+  void clear_node(Node<TK>* nodo){
+    //caso base
+    if(nodo == nullptr) 
+      return;
+    
+    //recursividad
+    if(!nodo->leaf){
+        for(int i = 0; i <= nodo->count; i++){
+            clear_node(nodo->children[i]);
+        }
+    }
+
+    delete nodo;
+  }
+  void clear(){ // eliminar todos lo elementos del arbol
+    clear_node(root);
+    root = nullptr;
+    n = 0;
+    return;
+  }; 
   
+  int size(){ // retorna el total de elementos insertados
+    return n;
+  }   
+  
+
   // Construya un árbol B a partir de un vector de elementos ordenados
-  static BTree* build_from_ordered_vector(vector<T> elements);
+  static BTree* build_from_ordered_vector(vector<TK> elements, int M){
+    BTree* resultado = new BTree(M);
+    for(auto element:elements){
+      resultado->insert(element);
+    }
+    return resultado;
+  }
+
+
   // Verifique las propiedades de un árbol B
+  //Propiedades: 
+  //➢ La raíz tiene al menos 2 hijos y contiene al menos un key
+  //➢ Todas las hojas están al mismo nivel
+  //➢ En cada nodo, todas las keys están ordenadas
+  //➢ Si M es el orden del árbol, entonces:
+  //➢ Cada nodo excepto la raíz, ⌈M/2⌉ - 1<= numero de keys <= M - 1
+  //➢ Cada nodo interno excepto la raiz, ⌈M/2⌉ <= número de hijos <= M
   bool check_properties();
+  
 
   ~BTree(){
     if (this->root != nullptr){
-      delete this->root;
+      clear();
     }
   };     // liberar memoria
 };
