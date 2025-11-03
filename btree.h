@@ -727,19 +727,16 @@ class BTree {
     
     //verificar keys ordenadas
     if (!verificar_keys_ordenadas(root)){
-      std::cerr << "[CHECK] Keys not ordered" << std::endl;
       return false;
     }
     
     // verificar que todas las hojas estén al mismo nivel
     if (!verificar_altura_hojas(root)) {
-      std::cerr << "[CHECK] Not all leaves at same level" << std::endl;
       return false;
     }
     
     // verificar límites de keys y children para los nodos
     if (!verificar_limites_nodos(root, true)) {
-      std::cerr << "[CHECK] Node limits violated (M=" << M << ")" << std::endl;
       return false;
     }
     

@@ -25,20 +25,9 @@ struct Node {
     leaf = true;
   }
 
-  void killSelf() {
-    if (children != nullptr) {
-      for (int i = 0; i < M; ++i) {
-        if (children[i] != nullptr) {
-          delete children[i];
-        }
-      }
-    }
+  ~Node(){
     if (keys != nullptr) delete[] keys;
     if (children != nullptr) delete[] children;
-  }
-
-  ~Node(){
-    killSelf();
   }
 
 };
